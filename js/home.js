@@ -226,22 +226,38 @@ export function setupHomeHandlers() {
     document.querySelectorAll('.form-container').forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const userKey = form.dataset.user;
-            const itemType = form.querySelector('.item-type-select').value;
-            const name = form.querySelector('.item-name').value;
-            const value = parseInt(form.querySelector('.item-value').value);
             
-            const userId = state[`user${userKey}`].id;
+            const submitButton = form.querySelector('button[type="submit"]');
             
-            if (itemType === 'payment') {
-                await ApiService.createPayment({ name, value, userId });
-            } else {
-                await ApiService.createDebt({ name, value, userId });
+            // Prevent duplicate submissions
+            if (submitButton.disabled) {
+                return;
             }
             
-            await loadUserData(userId, userKey);
-            form.reset();
-            renderApp();
+            submitButton.disabled = true;
+            submitButton.textContent = 'Creating...';
+            
+            try {
+                const userKey = form.dataset.user;
+                const itemType = form.querySelector('.item-type-select').value;
+                const name = form.querySelector('.item-name').value;
+                const value = parseInt(form.querySelector('.item-value').value);
+                
+                const userId = state[`user${userKey}`].id;
+                
+                if (itemType === 'payment') {
+                    await ApiService.createPayment({ name, value, userId });
+                } else {
+                    await ApiService.createDebt({ name, value, userId });
+                }
+                
+                await loadUserData(userId, userKey);
+                form.reset();
+                renderApp();
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Create';
+            }
         });
     });
     
