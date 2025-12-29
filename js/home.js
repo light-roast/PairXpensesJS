@@ -565,20 +565,59 @@ window.handleEditFormSubmit = async function(e) {
 };
 
 window.handleModalDelete = async function() {
-    if (confirm('Are you sure you want to delete this item?')) {
-        if (modalState.type === 'payment') {
-            await ApiService.deletePayment(modalState.id);
-        } else {
-            await ApiService.deleteDebt(modalState.id);
-        }
-        
-        await loadUserData(state.userA.id, 'A');
-        await loadUserData(state.userB.id, 'B');
-        
-        window.closeModal();
-        window.renderApp();
+    const deleteBtn = document.getElementById('deleteModalBtn');
+    
+    // If already showing confirmation, don't do anything
+    if (deleteBtn.dataset.confirming === 'true') {
+        return;
     }
+    
+    // Mark as confirming and change button appearance
+    deleteBtn.dataset.confirming = 'true';
+    deleteBtn.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+            <span style="font-size: 14px;">Are you sure?</span>
+            <div style="display: flex; gap: 8px;">
+                <button type="button" id="confirmYes" style="background-color: #ff4444; color: white; padding: 5px 15px; border: none; border-radius: 3px; cursor: pointer;">Yes</button>
+                <button type="button" id="confirmNo" style="background-color: #666; color: white; padding: 5px 15px; border: none; border-radius: 3px; cursor: pointer;">No</button>
+            </div>
+        </div>
+    `;
+    
+    // Handle Yes click
+    document.getElementById('confirmYes').addEventListener('click', async function() {
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<i class="bi bi-arrow-repeat" style="animation: spin 1s linear infinite;"></i> Deleting...';
+        
+        try {
+            if (modalState.type === 'payment') {
+                await ApiService.deletePayment(modalState.id);
+            } else {
+                await ApiService.deleteDebt(modalState.id);
+            }
+            
+            await loadUserData(state.userA.id, 'A');
+            await loadUserData(state.userB.id, 'B');
+            
+            window.closeModal();
+            window.renderApp();
+        } catch (error) {
+            console.error('Delete error:', error);
+            resetDeleteButton(deleteBtn);
+        }
+    });
+    
+    // Handle No click
+    document.getElementById('confirmNo').addEventListener('click', function() {
+        resetDeleteButton(deleteBtn);
+    });
 };
+
+function resetDeleteButton(deleteBtn) {
+    deleteBtn.dataset.confirming = 'false';
+    deleteBtn.disabled = false;
+    deleteBtn.textContent = 'Delete';
+}
 
 // Make renderApp available globally
 window.renderApp = function() {
