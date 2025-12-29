@@ -1,0 +1,121 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+.login-box {
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-family: "Expletus Sans", sans-serif;
+    background-color: #3A001E;
+    color: #FF8762;
+    max-width: 350px;
+    min-width: 270px;
+    margin: 20px;
+    padding: 15px;
+}
+
+.login-box h1,
+.login-box h3 {
+    margin-top: 25px;
+    text-align: center;
+    display: block;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.login-box .form-group {
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.login-box label {
+    color: #FF8762;
+    text-align: left;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.login-box input {
+    border: 2px solid #FF8762;
+    border-radius: 5px;
+    padding: 10px;
+    max-width: 300px;
+    min-width: 240px;
+    font-family: "Sono", monospace;
+    color: #FF8762;
+    background-color: #3A001E;
+    width: 100%;
+}
+
+.login-box button {
+    margin-bottom: 25px;
+    border-radius: 5px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #FF8762;
+    border-color: #FF8762;
+    color: #3A001E;
+    font-family: "Expletus Sans", sans-serif;
+    font-weight: bold;
+    padding: 10px 20px;
+    margin-top: 20px;
+}
+
+.login-box button:hover {
+    background-color: #E65A32;
+    border-color: #E65A32;
+    color: #3A001E;
+}
+
+.error-message {
+    color: #ff4444;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+}
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    .login-box {
+        max-width: 100%;
+        min-width: 0;
+        margin: 15px;
+        padding: 20px 15px;
+    }
+
+    .login-box h1 {
+        font-size: 24px;
+    }
+
+    .login-box h3 {
+        font-size: 18px;
+    }
+
+    .login-box input {
+        min-width: 0;
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .login-box {
+        margin: 10px;
+        padding: 15px 10px;
+    }
+
+    .login-box h1 {
+        font-size: 22px;
+        margin-top: 15px;
+    }
+
+    .login-box h3 {
+        font-size: 16px;
+    }
+}
