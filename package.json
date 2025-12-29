@@ -1,0 +1,11 @@
+{
+  "name": "pairxpensesjs",
+  "version": "1.0.0",
+  "description": "PairXpenses - Expense tracking app",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
