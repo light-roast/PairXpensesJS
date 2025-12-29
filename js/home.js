@@ -609,7 +609,7 @@ window.handleModalDelete = async function() {
     
     // Handle No click
     document.getElementById('confirmNo').addEventListener('click', function() {
-        resetDeleteButton(deleteBtn);
+        window.closeModal();
     });
 };
 
