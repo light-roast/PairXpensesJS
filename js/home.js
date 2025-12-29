@@ -263,7 +263,22 @@ export function setupHomeHandlers() {
     
     // Generate report button
     document.getElementById('generateReportBtn').addEventListener('click', async () => {
-        await generateReport();
+        const btn = document.getElementById('generateReportBtn');
+        
+        // Prevent duplicate submissions
+        if (btn.disabled) {
+            return;
+        }
+        
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-arrow-repeat" style="animation: spin 1s linear infinite;"></i> Generating...';
+        
+        try {
+            await generateReport();
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Generate report';
+        }
     });
     
     // Delete all button
