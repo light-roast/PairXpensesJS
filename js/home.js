@@ -526,10 +526,16 @@ window.openItemModal = function(type, id, name, value, userId) {
     const title = document.getElementById('modalTitle');
     const nameInput = document.getElementById('editName');
     const valueInput = document.getElementById('editValue');
+    const deleteBtn = document.getElementById('deleteModalBtn');
     
     title.textContent = `Edit ${type.charAt(0).toUpperCase() + type.slice(1)}`;
     nameInput.value = name;
     valueInput.value = value;
+    
+    // Reset delete button to original state
+    deleteBtn.dataset.confirming = 'false';
+    deleteBtn.disabled = false;
+    deleteBtn.textContent = 'Delete';
     
     modal.style.display = 'block';
 };
