@@ -75,11 +75,26 @@
     color: #3A001E;
 }
 
+.login-box button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
 .error-message {
     color: #ff4444;
     text-align: center;
     margin-top: 10px;
     font-size: 14px;
+}
+
+/* Spinning icon animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 /* Mobile Responsive Styles */
 @media screen and (max-width: 768px) {

@@ -28,16 +28,34 @@ export function setupLoginHandlers() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        const submitButton = form.querySelector('button[type="submit"]');
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const errorDiv = document.getElementById('errorMessage');
         
-        const success = await ApiService.login(username, password);
+        // Prevent duplicate submissions and show loading
+        if (submitButton.disabled) {
+            return;
+        }
         
-        if (success) {
-            window.location.hash = '#home';
-        } else {
-            errorDiv.textContent = 'Invalid username or password';
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="bi bi-arrow-repeat" style="animation: spin 1s linear infinite;"></i> Loading...';
+        errorDiv.textContent = '';
+        
+        try {
+            const success = await ApiService.login(username, password);
+            
+            if (success) {
+                window.location.hash = '#home';
+            } else {
+                errorDiv.textContent = 'Invalid username or password';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Login';
+            }
+        } catch (error) {
+            errorDiv.textContent = 'An error occurred. Please try again.';
+            submitButton.disabled = false;
+            submitButton.textContent = 'Login';
         }
     });
 }
