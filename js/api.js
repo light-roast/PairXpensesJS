@@ -233,7 +233,7 @@ export class ApiService {
         try {
             const response = await this.request(`/Debt/${debtId}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ name: debt.name, value: debt.value })
+                body: JSON.stringify({ id: debtId, name: debt.name, value: debt.value })
             });
 
             if (response && response.ok) {
