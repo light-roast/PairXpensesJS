@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'https://localhost:7234/api';
+const API_BASE_URL = 'https://pairxpenses.azurewebsites.net/api';
 
 // API Service
 export class ApiService {
