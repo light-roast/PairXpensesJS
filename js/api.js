@@ -3,7 +3,128 @@ const API_BASE_URL = 'https://pairxpenses.azurewebsites.net/api';
 
 // API Service
 export class ApiService {
+    // Decode JWT token
+    static decodeToken(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (error) {
+            console.error('Error decoding token:', error);
+            return null;
+        }
+    }
+
+    // Check if token is expired
+    static isTokenExpired(token) {
+        if (!token) return true;
+        
+        const decoded = this.decodeToken(token);
+        if (!decoded || !decoded.exp) return true;
+        
+        // exp is in seconds, Date.now() is in milliseconds
+        const currentTime = Date.now() / 1000;
+        return decoded.exp < currentTime;
+    }
+
+    // Show expired token modal
+    static showExpiredTokenModal() {
+        // Remove existing modal if any
+        const existingModal = document.getElementById('expired-token-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Create modal HTML
+        const modalHTML = `
+            <div id="expired-token-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <h2>Session Expired</h2>
+                    <p>Your session has expired. A new login is required.</p>
+                    <button id="modal-ok-btn" class="modal-btn">OK</button>
+                </div>
+            </div>
+        `;
+
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Add event listener to OK button
+        document.getElementById('modal-ok-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        });
+
+        // Add styles if not already present
+        if (!document.getElementById('modal-styles')) {
+            const styleTag = document.createElement('style');
+            styleTag.id = 'modal-styles';
+            styleTag.textContent = `
+                .modal-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999;
+                }
+                .modal-content {
+                    background-color: var(--main-color, #FFF7F3);
+                    padding: 30px 40px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                    text-align: center;
+                    max-width: 400px;
+                    width: 90%;
+                }
+                .modal-content h2 {
+                    color: var(--primary-dark, #3A001E);
+                    margin-bottom: 15px;
+                    font-family: "Expletus Sans", sans-serif;
+                }
+                .modal-content p {
+                    color: var(--primary-dark, #3A001E);
+                    margin-bottom: 25px;
+                    font-size: 16px;
+                }
+                .modal-btn {
+                    background-color: var(--primary-accent, #FF8762);
+                    color: var(--primary-dark, #3A001E);
+                    padding: 12px 30px;
+                    font-size: 16px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-family: "Expletus Sans", sans-serif;
+                    font-weight: bold;
+                    transition: background-color 0.3s ease;
+                }
+                .modal-btn:hover {
+                    background-color: var(--accent-hover, #E65A32);
+                }
+            `;
+            document.head.appendChild(styleTag);
+        }
+    }
     static async request(endpoint, options = {}) {
+        // Skip token validation for login endpoint
+        if (!endpoint.includes('/Account/Login')) {
+            const token = localStorage.getItem('token');
+            
+            // Validate token before making request
+            if (this.isTokenExpired(token)) {
+                this.showExpiredTokenModal();
+                return null;
+            }
+        }
+
         const token = localStorage.getItem('token');
         const headers = {
             'Content-Type': 'application/json',
@@ -19,7 +140,7 @@ export class ApiService {
 
             if (!response.ok && response.status === 401) {
                 localStorage.removeItem('token');
-                window.location.href = '/';
+                this.showExpiredTokenModal();
                 return null;
             }
 
