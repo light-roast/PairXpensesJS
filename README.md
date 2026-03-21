@@ -134,3 +134,4 @@ Works in all modern browsers that support:
 - Fetch API
 - LocalStorage
 - Arrow functions
+- M.
