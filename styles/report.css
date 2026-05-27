@@ -155,6 +155,53 @@
     text-align: right;
 }
 
+@media screen and (max-width: 768px) {
+    .full-report-container {
+        padding: 16px;
+    }
+
+    .full-report-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .full-report-heading h1 {
+        font-size: 1.2rem;
+        word-wrap: break-word;
+    }
+
+    .full-report-summary {
+        padding: 12px 14px;
+    }
+
+    .full-report-summary p,
+    .full-report-final {
+        font-size: 13px;
+    }
+
+    .full-report-users {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .full-report-user {
+        padding: 12px;
+    }
+
+    .full-report-header,
+    .full-report-row,
+    .full-report-total {
+        font-size: 12px;
+        padding: 6px 2px;
+    }
+
+    .full-report-row span,
+    .full-report-header h4 {
+        word-break: break-word;
+    }
+}
+
 @media print {
     @page {
         size: A4;
