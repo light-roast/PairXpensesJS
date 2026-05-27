@@ -1,0 +1,203 @@
+.full-report-container {
+    background-color: var(--main-color);
+    color: var(--primary-dark);
+    padding: 32px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    font-family: "Chivo Mono", monospace;
+}
+
+.full-report-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.full-report-actions button {
+    background-color: var(--primary-accent);
+    color: var(--primary-dark);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: "Expletus Sans", sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.full-report-actions button:hover {
+    background-color: var(--accent-hover);
+}
+
+.full-report-heading {
+    text-align: center;
+    border-bottom: 2px solid var(--primary-dark);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+}
+
+.full-report-heading h1 {
+    font-family: "Expletus Sans", sans-serif;
+    margin: 0 0 6px 0;
+}
+
+.full-report-date {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.75;
+}
+
+.full-report-summary {
+    background-color: rgba(255, 135, 98, 0.08);
+    border-left: 4px solid var(--primary-accent);
+    padding: 16px 24px;
+    margin-bottom: 32px;
+    border-radius: 4px;
+}
+
+.full-report-summary h2 {
+    font-family: "Expletus Sans", sans-serif;
+    margin-top: 0;
+}
+
+.full-report-summary p {
+    margin: 6px 0;
+    line-height: 1.5;
+}
+
+.full-report-final {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--primary-dark);
+    font-weight: bold;
+}
+
+.full-report-users {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.full-report-user {
+    border: 1px solid var(--primary-dark);
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.full-report-user h2 {
+    text-align: center;
+    font-family: "Expletus Sans", sans-serif;
+    margin-top: 0;
+    color: var(--primary-dark);
+}
+
+.full-report-section {
+    margin-top: 16px;
+}
+
+.full-report-section h3 {
+    text-align: center;
+    font-family: "Expletus Sans", sans-serif;
+    margin-bottom: 8px;
+}
+
+.full-report-header,
+.full-report-row,
+.full-report-total {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 6px 4px;
+    align-items: center;
+}
+
+.full-report-header {
+    border-bottom: 2px solid var(--primary-dark);
+    font-family: "Expletus Sans", sans-serif;
+}
+
+.full-report-header h4 {
+    margin: 0;
+    text-align: center;
+}
+
+.full-report-header h4:first-child {
+    text-align: left;
+}
+
+.full-report-row {
+    border-bottom: 1px solid rgba(58, 0, 30, 0.15);
+}
+
+.full-report-row span:first-child {
+    text-align: left;
+}
+
+.full-report-row span:not(:first-child) {
+    text-align: center;
+}
+
+.full-report-empty {
+    padding: 12px;
+    text-align: center;
+    opacity: 0.6;
+    font-style: italic;
+}
+
+.full-report-total {
+    margin-top: 6px;
+    border-top: 2px solid var(--primary-dark);
+    font-weight: bold;
+    grid-template-columns: 2fr 1fr;
+}
+
+.full-report-total span:last-child {
+    text-align: right;
+}
+
+@media print {
+    @page {
+        size: A4;
+        margin: 14mm;
+    }
+
+    body {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .full-report-container {
+        background-color: white;
+        color: black;
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .full-report-heading,
+    .full-report-user,
+    .full-report-summary {
+        page-break-inside: avoid;
+    }
+
+    .full-report-summary {
+        background-color: transparent;
+        border-left-color: black;
+    }
+
+    .full-report-user {
+        border-color: black;
+    }
+
+    .full-report-header,
+    .full-report-total {
+        border-color: black !important;
+    }
+
+    .full-report-users {
+        grid-template-columns: 1fr 1fr;
+    }
+}

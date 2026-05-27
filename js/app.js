@@ -1,6 +1,6 @@
 import { renderLogin, setupLoginHandlers } from './login.js';
 import { renderHome, setupHomeHandlers, initHome } from './home.js';
-import { renderReport, renderNoReport } from './report.js';
+import { renderReport, renderNoReport, renderFullReport } from './report.js';
 
 // Router
 class Router {
@@ -9,6 +9,7 @@ class Router {
             '': this.handleLogin.bind(this),
             'home': this.handleHome.bind(this),
             'report': this.handleReport.bind(this),
+            'full-report': this.handleFullReport.bind(this),
             'no-report': this.handleNoReport.bind(this)
         };
         
@@ -66,9 +67,19 @@ class Router {
             window.location.hash = '';
             return;
         }
-        
+
         const app = document.getElementById('app');
         app.innerHTML = renderNoReport();
+    }
+
+    handleFullReport() {
+        if (!this.isAuthenticated()) {
+            window.location.hash = '';
+            return;
+        }
+
+        const app = document.getElementById('app');
+        app.innerHTML = renderFullReport();
     }
 }
 

@@ -47,6 +47,7 @@ export function renderHome() {
         
         <section class="actions-section">
             <button id="generateReportBtn">Generate report</button>
+            <button id="generateFullReportBtn">Full report (PDF)</button>
             <div>
                 <div id="confirmationDialog" style="display: none;" class="confirmation-dialog">
                     <p>Are you sure you want to start a new month and reset debts and payments?</p>
@@ -280,7 +281,23 @@ export function setupHomeHandlers() {
             btn.textContent = 'Generate report';
         }
     });
-    
+
+    // Full report (PDF) button
+    document.getElementById('generateFullReportBtn').addEventListener('click', async () => {
+        const btn = document.getElementById('generateFullReportBtn');
+        if (btn.disabled) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-arrow-repeat" style="animation: spin 1s linear infinite;"></i> Building...';
+
+        try {
+            await generateFullReport();
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Full report (PDF)';
+        }
+    });
+
     // Delete all button
     document.getElementById('deleteAllBtn').addEventListener('click', () => {
         document.getElementById('confirmationDialog').style.display = 'block';
@@ -405,13 +422,9 @@ window.handleUserFormSubmit = async function(e) {
     }
 };
 
-async function generateReport() {
+async function buildMonthlyReport() {
     const data = await ApiService.getReport(state.percentageA);
-
-    if (!data || !data.hasData) {
-        window.location.hash = '#no-report';
-        return;
-    }
+    if (!data || !data.hasData) return null;
 
     const formatCurrency = (value) => new Intl.NumberFormat('es-CO', {
         style: 'currency',
@@ -478,8 +491,41 @@ async function generateReport() {
             : `${fromName} owes ${amount} to ${toName}`;
     }
 
-    sessionStorage.setItem('report', JSON.stringify(report));
+    return { data, report };
+}
+
+async function generateReport() {
+    const result = await buildMonthlyReport();
+    if (!result) {
+        window.location.hash = '#no-report';
+        return;
+    }
+    sessionStorage.setItem('report', JSON.stringify(result.report));
     window.location.hash = '#report';
+}
+
+async function generateFullReport() {
+    const result = await buildMonthlyReport();
+    if (!result) {
+        window.location.hash = '#no-report';
+        return;
+    }
+    sessionStorage.setItem('report', JSON.stringify(result.report));
+    sessionStorage.setItem('fullReportData', JSON.stringify({
+        userA: {
+            id: result.data.userA.id,
+            name: result.data.userA.name,
+            payments: state.paymentsA || [],
+            debts: state.debtsA || []
+        },
+        userB: {
+            id: result.data.userB.id,
+            name: result.data.userB.name,
+            payments: state.paymentsB || [],
+            debts: state.debtsB || []
+        }
+    }));
+    window.location.hash = '#full-report';
 }
 
 // Modal state
