@@ -70,7 +70,7 @@ Hash-based, no library. In `js/app.js`:
 | Hash | Handler | Renders |
 |---|---|---|
 | `` (empty) | `handleLogin` | `renderLogin()` — short-circuits to `#home` if token present |
-| `#home` | `handleHome` | `initHome()` then `renderHome()` — requires token, else `→ ''` |
+| `#home` | `handleHome` | Stale-while-revalidate: if `sessionStorage.homeState` exists, hydrate state synchronously via `renderHomeFromCache()` and paint immediately, then re-run `initHome()` in the background and re-render. Cold path (no cache) shows "Loading..." then `initHome()` → `renderHome()`. Requires token, else `→ ''`. |
 | `#report` | `handleReport` | `renderReport()` — reads `sessionStorage.report` |
 | `#full-report` | `handleFullReport` | `renderFullReport()` — reads `sessionStorage.report` + `sessionStorage.fullReportData` |
 | `#no-report` | `handleNoReport` | `renderNoReport()` — empty-state when totals are all 0 |
@@ -82,7 +82,7 @@ Auth gate is per-handler (`isAuthenticated()` → `localStorage.token` presence)
 - Login: `POST /api/Account/Login` returns the JWT body as plain text. Stored in `localStorage.token`.
 - Every non-login request goes through `ApiService.request()`:
   1. Decode token (`atob` on the payload segment, then `JSON.parse`).
-  2. If `exp` is in the past → call `showExpiredTokenModal()` which builds a DOM modal inline, removes the token, sends the user back to `/`.
+  2. If `exp` is in the past → call `showExpiredTokenModal()` which builds a DOM modal inline. The OK button removes the token, calls `clearHomeCache()`, and sends the user back to `/`.
   3. If response is `401` → same flow.
   4. Otherwise return the raw `Response` (caller does `.json()` / `.text()`).
 - Token is **never** refreshed. 20-minute expiry → modal → relogin.
@@ -104,14 +104,15 @@ let state = {
 };
 ```
 
-- Populated by `initHome()` → `ApiService.getUsers()` then per-user `getPaymentsByUser` + `getDebtsByUser`.
-- After any mutation (create/edit/delete payment or debt, edit user name), the code re-fetches the affected user's data and calls `window.renderApp()` to re-render the entire home view from scratch. No DOM diffing.
+- Populated by `initHome()` → `ApiService.getUsers()` then per-user `getPaymentsByUser` + `getDebtsByUser`. `initHome()` ends with a `saveHomeCache()` call so the very first paint of the session lands in cache.
+- After any mutation (create/edit/delete payment or debt, edit user name), the code re-fetches the affected user's data and calls `window.renderApp()` to re-render the entire home view from scratch. `window.renderApp` calls `saveHomeCache()` first, so the cache always reflects the latest state. No DOM diffing.
 - `state` is module-scoped to `home.js`. Other files reach it via the side effects of `window.renderApp` / `window.openItemModal` etc. that `home.js` attaches to `window`.
 
 For cross-route data we lean on `sessionStorage`:
 
 - `sessionStorage.report` — the 6 monthly summary strings (`report1..5`, `finalReport`) built by `buildMonthlyReport`. Read by both `renderReport` and `renderFullReport`.
 - `sessionStorage.fullReportData` — `{userA, userB}` each with `{id, name, payments[], debts[]}`. Written only by `generateFullReport`. Read only by `renderFullReport`.
+- `sessionStorage.homeState` — versioned snapshot `{v, savedAt, users, userA, userB, paymentsA, paymentsB, debtsA, debtsB}` used by `renderHomeFromCache()` for instant back-nav. Written by `saveHomeCache()` (called from `initHome` and `window.renderApp`). Cleared on a fresh login (`login.js`) and when the expired-token modal fires (`api.js`). `percentageA` and `isOrderReversed` are **deliberately not cached** — they are local UI knobs that should reset on tab close.
 
 ## The monthly report flow
 
@@ -196,6 +197,9 @@ npm start        # → npx serve .
 - Don't store anything sensitive in `sessionStorage.report` / `sessionStorage.fullReportData` — they're cleared on tab close but they're plain text and visible in DevTools. Today they only hold derived totals + names + payment/debt lists that the user just saw, so this is fine.
 
 ## History (most recent first)
+
+- **2026-05-27**:
+  - Added `sessionStorage`-backed stale-while-revalidate cache for the home view. New module `js/cache.js` owns the `homeState` key. `handleHome` now paints from cache instantly on back-from-report and then revalidates in the background. Cold load is unchanged. Cache cleared on fresh login and on the expired-token modal. `percentageA` / `isOrderReversed` deliberately not cached.
 
 - **2026-05-26**:
   - Moved the monthly report calculation to the API (`GET /api/Report?percentageA=`). Frontend now fetches a structured response and only does presentation. `home.js` shrank a lot.
