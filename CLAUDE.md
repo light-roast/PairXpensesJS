@@ -40,7 +40,11 @@ js/
   api.js                         — ApiService static class: fetch wrapper, JWT decode/expiry, all endpoint calls
   login.js                       — renderLogin + setupLoginHandlers
   home.js                        — biggest file. State, render, all handlers, buildMonthlyReport,
-                                   generateReport, generateFullReport, all modal globals
+                                   generateReport, generateFullReport, all modal globals.
+                                   Also exposes renderHomeFromCache() for instant back-nav paint.
+  cache.js                       — owns sessionStorage.homeState key. Exports saveHomeCache(snapshot),
+                                   loadHomeCache(), clearHomeCache(). No imports — breaks the
+                                   home.js ↔ api.js cycle that clearing-on-401 would create.
   report.js                      — renderReport (text summary), renderNoReport, renderFullReport
                                    (combined view with per-user tables)
 styles/
