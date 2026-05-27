@@ -1,4 +1,5 @@
 import { ApiService } from './api.js';
+import { saveHomeCache as _saveHomeCache, loadHomeCache } from './cache.js';
 
 let state = {
     users: [],
@@ -12,6 +13,36 @@ let state = {
     debtsB: []
 };
 
+function saveHomeCache() {
+    _saveHomeCache({
+        users: state.users,
+        userA: state.userA,
+        userB: state.userB,
+        paymentsA: state.paymentsA,
+        paymentsB: state.paymentsB,
+        debtsA: state.debtsA,
+        debtsB: state.debtsB
+    });
+}
+
+function hydrateFromCache(cache) {
+    state.users = cache.users;
+    state.userA = cache.userA;
+    state.userB = cache.userB;
+    state.paymentsA = cache.paymentsA || [];
+    state.paymentsB = cache.paymentsB || [];
+    state.debtsA = cache.debtsA || [];
+    state.debtsB = cache.debtsB || [];
+    // percentageA + isOrderReversed intentionally left at defaults
+}
+
+export function renderHomeFromCache() {
+    const cache = loadHomeCache();
+    if (!cache) return false;
+    hydrateFromCache(cache);
+    return true;
+}
+
 export async function initHome() {
     const users = await ApiService.getUsers();
     if (users && users.length >= 2) {
@@ -19,9 +50,10 @@ export async function initHome() {
         state.userA = users[0];
         state.userB = users[1];
     }
-    
+
     await loadUserData(state.userA.id, 'A');
     await loadUserData(state.userB.id, 'B');
+    saveHomeCache();
 }
 
 async function loadUserData(userId, userKey) {
@@ -644,6 +676,7 @@ function resetDeleteButton(deleteBtn) {
 
 // Make renderApp available globally
 window.renderApp = function() {
+    saveHomeCache();
     const app = document.getElementById('app');
     app.innerHTML = renderHome();
     setupHomeHandlers();

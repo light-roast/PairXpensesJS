@@ -1,4 +1,5 @@
 import { ApiService } from './api.js';
+import { clearHomeCache } from './cache.js';
 
 export function renderLogin() {
     return `
@@ -46,6 +47,7 @@ export function setupLoginHandlers() {
             const success = await ApiService.login(username, password);
             
             if (success) {
+                clearHomeCache();
                 window.location.hash = '#home';
             } else {
                 errorDiv.textContent = 'Invalid username or password';

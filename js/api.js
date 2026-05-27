@@ -1,3 +1,5 @@
+import { clearHomeCache } from './cache.js';
+
 // API Configuration
 const API_BASE_URL = 'https://pairxpenses.azurewebsites.net/api';
 
@@ -55,6 +57,7 @@ export class ApiService {
         // Add event listener to OK button
         document.getElementById('modal-ok-btn').addEventListener('click', () => {
             localStorage.removeItem('token');
+            clearHomeCache();
             window.location.href = '/';
         });
 

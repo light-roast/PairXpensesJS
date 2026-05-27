@@ -1,5 +1,5 @@
 import { renderLogin, setupLoginHandlers } from './login.js';
-import { renderHome, setupHomeHandlers, initHome } from './home.js';
+import { renderHome, setupHomeHandlers, initHome, renderHomeFromCache } from './home.js';
 import { renderReport, renderNoReport, renderFullReport } from './report.js';
 
 // Router
@@ -43,10 +43,24 @@ class Router {
             window.location.hash = '';
             return;
         }
-        
+
         const app = document.getElementById('app');
+        const hadCache = renderHomeFromCache();
+
+        if (hadCache) {
+            app.innerHTML = renderHome();
+            setupHomeHandlers();
+
+            try {
+                await initHome();
+                window.renderApp();
+            } catch (_) {
+                // network failure: keep cached view. 401 path handled by ApiService.
+            }
+            return;
+        }
+
         app.innerHTML = '<div class="loading">Loading...</div>';
-        
         await initHome();
         app.innerHTML = renderHome();
         setupHomeHandlers();
