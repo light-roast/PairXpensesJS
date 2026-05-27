@@ -300,6 +300,20 @@ export class ApiService {
         }
     }
 
+    // Report endpoint
+    static async getReport(percentageA) {
+        try {
+            const response = await this.request(`/Report?percentageA=${percentageA}`);
+            if (response && response.ok) {
+                return await response.json();
+            }
+            return null;
+        } catch (error) {
+            console.error('Get report error:', error);
+            return null;
+        }
+    }
+
     // Debt endpoints
     static async getDebtsByUser(userId) {
         try {

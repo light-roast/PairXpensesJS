@@ -406,107 +406,78 @@ window.handleUserFormSubmit = async function(e) {
 };
 
 async function generateReport() {
-    const totalPaymentA = await ApiService.getTotalPaymentByUser(state.userA.id);
-    const totalPaymentB = await ApiService.getTotalPaymentByUser(state.userB.id);
-    const totalDebtA = await ApiService.getTotalDebtByUser(state.userA.id);
-    const totalDebtB = await ApiService.getTotalDebtByUser(state.userB.id);
-    
-    if (totalPaymentA === 0 && totalPaymentB === 0 && totalDebtA === 0 && totalDebtB === 0) {
+    const data = await ApiService.getReport(state.percentageA);
+
+    if (!data || !data.hasData) {
         window.location.hash = '#no-report';
         return;
     }
-    
-    const totalExpense = totalPaymentA + totalPaymentB;
-    const expenseForA = totalExpense * state.percentageA / 100;
-    const expenseForB = totalExpense - expenseForA;
-    
-    const formatCurrency = (value) => new Intl.NumberFormat('es-CO', { 
-        style: 'currency', 
-        currency: 'COP', 
-        minimumFractionDigits: 0 
+
+    const formatCurrency = (value) => new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0
     }).format(value);
-    
+
+    const a = data.userA;
+    const b = data.userB;
+    const pctA = data.percentageA;
+    const pctB = 100 - pctA;
+    const overspentByA = a.totalPayment > a.share;
+    const overspentByB = b.totalPayment > b.share;
+
     let report = {
-        report1: `Total pair expenses during the month: ${formatCurrency(totalExpense)}.\n`,
+        report1: `Total pair expenses during the month: ${formatCurrency(data.totalExpense)}.\n`,
         report2: '',
         report3: '',
         report4: '',
         report5: '',
         finalReport: ''
     };
-    
-    let debtFromAtoB = 0;
-    let debtFromBtoA = 0;
-    
-    if (totalPaymentA > expenseForA) {
-        debtFromBtoA = totalPaymentA - expenseForA;
-        report.report2 = `${state.userA.name} spent ${formatCurrency(totalPaymentA)} during the month. Which is more than their share (${state.percentageA}% / ${formatCurrency(expenseForA)}).\n`;
-        report.report3 = totalPaymentB !== 0 
-            ? `${state.userB.name} spent ${formatCurrency(totalPaymentB)} during the month. Which is less than their share (${100 - state.percentageA}% / ${formatCurrency(expenseForB)}).\n`
-            : `${state.userB.name} did not register payments during the month and their share is ${100 - state.percentageA}% / ${formatCurrency(expenseForB)}.\n`;
-        report.report4 = totalDebtA !== 0 
-            ? `${state.userA.name} accumulated a total of debts with ${state.userB.name} amounting to ${formatCurrency(totalDebtA)}`
-            : `${state.userA.name} does not have any debts with ${state.userB.name}.`;
-        report.report5 = totalDebtB !== 0 
-            ? `${state.userB.name} accumulated a total of debts with ${state.userA.name} amounting to ${formatCurrency(totalDebtB)}`
-            : `${state.userB.name} does not have any debts with ${state.userA.name}.`;
-    } else if (totalPaymentB > expenseForB) {
-        debtFromAtoB = totalPaymentB - expenseForB;
-        report.report2 = `${state.userB.name} spent ${formatCurrency(totalPaymentB)} during the month. Which is more than their share (${100 - state.percentageA}% / ${formatCurrency(expenseForB)}).\n`;
-        report.report3 = totalPaymentA !== 0 
-            ? `${state.userA.name} spent ${formatCurrency(totalPaymentA)} during the month. Which is less than their share (${state.percentageA}% / ${formatCurrency(expenseForA)}).\n`
-            : `${state.userA.name} did not register payments during the month and their share is ${state.percentageA}% / ${formatCurrency(expenseForA)}.\n`;
-        report.report4 = totalDebtB !== 0 
-            ? `${state.userB.name} accumulated a total of debts with ${state.userA.name} amounting to ${formatCurrency(totalDebtB)}`
-            : `${state.userB.name} does not have any debts with ${state.userA.name}.`;
-        report.report5 = totalDebtA !== 0 
-            ? `${state.userA.name} accumulated a total of debts with ${state.userB.name} amounting to ${formatCurrency(totalDebtA)}`
-            : `${state.userA.name} does not have any debts with ${state.userB.name}.`;
+
+    if (overspentByA) {
+        report.report2 = `${a.name} spent ${formatCurrency(a.totalPayment)} during the month. Which is more than their share (${pctA}% / ${formatCurrency(a.share)}).\n`;
+        report.report3 = b.totalPayment !== 0
+            ? `${b.name} spent ${formatCurrency(b.totalPayment)} during the month. Which is less than their share (${pctB}% / ${formatCurrency(b.share)}).\n`
+            : `${b.name} did not register payments during the month and their share is ${pctB}% / ${formatCurrency(b.share)}.\n`;
+        report.report4 = a.totalDebt !== 0
+            ? `${a.name} accumulated a total of debts with ${b.name} amounting to ${formatCurrency(a.totalDebt)}`
+            : `${a.name} does not have any debts with ${b.name}.`;
+        report.report5 = b.totalDebt !== 0
+            ? `${b.name} accumulated a total of debts with ${a.name} amounting to ${formatCurrency(b.totalDebt)}`
+            : `${b.name} does not have any debts with ${a.name}.`;
+    } else if (overspentByB) {
+        report.report2 = `${b.name} spent ${formatCurrency(b.totalPayment)} during the month. Which is more than their share (${pctB}% / ${formatCurrency(b.share)}).\n`;
+        report.report3 = a.totalPayment !== 0
+            ? `${a.name} spent ${formatCurrency(a.totalPayment)} during the month. Which is less than their share (${pctA}% / ${formatCurrency(a.share)}).\n`
+            : `${a.name} did not register payments during the month and their share is ${pctA}% / ${formatCurrency(a.share)}.\n`;
+        report.report4 = b.totalDebt !== 0
+            ? `${b.name} accumulated a total of debts with ${a.name} amounting to ${formatCurrency(b.totalDebt)}`
+            : `${b.name} does not have any debts with ${a.name}.`;
+        report.report5 = a.totalDebt !== 0
+            ? `${a.name} accumulated a total of debts with ${b.name} amounting to ${formatCurrency(a.totalDebt)}`
+            : `${a.name} does not have any debts with ${b.name}.`;
     } else {
         report.report3 = "All users spent accordingly to their shares";
-        report.report4 = totalDebtA !== 0 
-            ? `${state.userA.name} accumulated a total of debts with ${state.userB.name} amounting to ${formatCurrency(totalDebtA)}`
-            : `${state.userA.name} does not have any debts with ${state.userB.name}.`;
-        report.report5 = totalDebtB !== 0 
-            ? `${state.userB.name} accumulated a total of debts with ${state.userA.name} amounting to ${formatCurrency(totalDebtB)}`
-            : `${state.userB.name} does not have any debts with ${state.userA.name}.`;
+        report.report4 = a.totalDebt !== 0
+            ? `${a.name} accumulated a total of debts with ${b.name} amounting to ${formatCurrency(a.totalDebt)}`
+            : `${a.name} does not have any debts with ${b.name}.`;
+        report.report5 = b.totalDebt !== 0
+            ? `${b.name} accumulated a total of debts with ${a.name} amounting to ${formatCurrency(b.totalDebt)}`
+            : `${b.name} does not have any debts with ${a.name}.`;
     }
-    
-    // Calculate final report
-    if (debtFromBtoA > 0) {
-        const totalBDebt = debtFromBtoA + totalDebtB;
-        const netDebt = totalBDebt - totalDebtA;
-        
-        if (netDebt > 0) {
-            report.finalReport = `${state.userB.name} owes ${state.userA.name} ${formatCurrency(netDebt)} for the month's expenses.`;
-        } else if (netDebt < 0) {
-            report.finalReport = `${state.userA.name} owes ${state.userB.name} ${formatCurrency(-netDebt)} for the month's expenses.`;
-        } else {
-            report.finalReport = "Both users spent within their share and neither owes anything to the other.";
-        }
-    } else if (debtFromAtoB > 0) {
-        const totalADebt = debtFromAtoB + totalDebtA;
-        const netDebt = totalADebt - totalDebtB;
-        
-        if (netDebt > 0) {
-            report.finalReport = `${state.userA.name} owes ${state.userB.name} ${formatCurrency(netDebt)} for the month's expenses.`;
-        } else if (netDebt < 0) {
-            report.finalReport = `${state.userB.name} owes ${state.userA.name} ${formatCurrency(-netDebt)} for the month's expenses.`;
-        } else {
-            report.finalReport = "Both users spent within their share and neither owes anything to the other.";
-        }
+
+    if (!data.settlement) {
+        report.finalReport = "Both users spent within their share and neither owes anything to the other.";
     } else {
-        if (totalDebtA === totalDebtB) {
-            report.finalReport = "Both users spent within their share and neither owes anything to the other.";
-        } else if (totalDebtA > totalDebtB) {
-            const final = totalDebtA - totalDebtB;
-            report.finalReport = `${state.userA.name} owes ${formatCurrency(final)} to ${state.userB.name}`;
-        } else {
-            const final = totalDebtB - totalDebtA;
-            report.finalReport = `${state.userB.name} owes ${formatCurrency(final)} to ${state.userA.name}`;
-        }
+        const fromName = data.settlement.fromUserId === a.id ? a.name : b.name;
+        const toName = data.settlement.toUserId === a.id ? a.name : b.name;
+        const amount = formatCurrency(data.settlement.amount);
+        report.finalReport = (overspentByA || overspentByB)
+            ? `${fromName} owes ${toName} ${amount} for the month's expenses.`
+            : `${fromName} owes ${amount} to ${toName}`;
     }
-    
+
     sessionStorage.setItem('report', JSON.stringify(report));
     window.location.hash = '#report';
 }
