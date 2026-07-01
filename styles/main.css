@@ -9,11 +9,11 @@ html {
 }
 
 :root {
-    --main-color: #F5F1E6;
-    --secondary-color: #D8CBA6;
-    --primary-dark: #1C2B22;
-    --primary-accent: #8C2F39;
-    --accent-hover: #6E232B;
+    --main-color: #FFF7F3;
+    --secondary-color: #EEE8A9;
+    --primary-dark: #080004;
+    --primary-accent: #FF8762;
+    --accent-hover: #E65A32;
 }
 
 body {
