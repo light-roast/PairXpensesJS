@@ -248,6 +248,26 @@ button:disabled {
     width: 150px;
 }
 
+.mobile-percentage-controls {
+    display: none;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.mobile-percentage-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mobile-percentage-input label {
+    font-weight: bold;
+}
+
+.mobile-percentage-input input[type="number"] {
+    width: 75px;
+}
+
 .percentage-display {
     display: flex;
     gap: 20px;
@@ -461,6 +481,14 @@ input:checked + .slider:before {
 
 /* Mobile Responsive Styles */
 @media screen and (max-width: 768px) {
+    .percentage-control input[type="range"] {
+        display: none;
+    }
+
+    .mobile-percentage-controls {
+        display: flex;
+    }
+
     nav {
         flex-direction: column;
         gap: 10px;

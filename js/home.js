@@ -139,6 +139,16 @@ function renderChargeControl() {
             <div class="percentage-control">
                 <label>Split:</label>
                 <input type="range" id="percentageSlider" min="0" max="100" value="${state.percentageA}" />
+                <div class="mobile-percentage-controls">
+                    <div class="mobile-percentage-input">
+                        <label for="percentageAInput">${state.userA.name}</label>
+                        <input type="number" id="percentageAInput" min="0" max="100" value="${state.percentageA}" />
+                    </div>
+                    <div class="mobile-percentage-input">
+                        <label for="percentageBInput">${state.userB.name}</label>
+                        <input type="number" id="percentageBInput" min="0" max="100" value="${100 - state.percentageA}" />
+                    </div>
+                </div>
             </div>
             <div class="percentage-display">
                 <span>${state.userA.name}: <strong id="percentageADisplay">${state.percentageA}%</strong></span>
@@ -153,6 +163,37 @@ function renderChargeControl() {
             </div>
         </div>
     `;
+}
+
+function setPercentageA(value) {
+    const nextValue = Math.min(100, Math.max(0, parseInt(value, 10) || 0));
+    state.percentageA = nextValue;
+
+    const percentageADisplay = document.getElementById('percentageADisplay');
+    const percentageBDisplay = document.getElementById('percentageBDisplay');
+    const slider = document.getElementById('percentageSlider');
+    const percentageAInput = document.getElementById('percentageAInput');
+    const percentageBInput = document.getElementById('percentageBInput');
+
+    if (percentageADisplay) {
+        percentageADisplay.textContent = `${state.percentageA}%`;
+    }
+
+    if (percentageBDisplay) {
+        percentageBDisplay.textContent = `${100 - state.percentageA}%`;
+    }
+
+    if (slider) {
+        slider.value = String(state.percentageA);
+    }
+
+    if (percentageAInput) {
+        percentageAInput.value = String(state.percentageA);
+    }
+
+    if (percentageBInput) {
+        percentageBInput.value = String(100 - state.percentageA);
+    }
 }
 
 function renderUserColumn(user, userKey) {
@@ -240,13 +281,27 @@ function renderDebtItem(debt) {
 }
 
 export function setupHomeHandlers() {
-    // Percentage slider
+    // Percentage controls
     const slider = document.getElementById('percentageSlider');
-    slider.addEventListener('input', (e) => {
-        state.percentageA = parseInt(e.target.value);
-        document.getElementById('percentageADisplay').textContent = `${state.percentageA}%`;
-        document.getElementById('percentageBDisplay').textContent = `${100 - state.percentageA}%`;
-    });
+    if (slider) {
+        slider.addEventListener('input', (e) => {
+            setPercentageA(e.target.value);
+        });
+    }
+
+    const percentageAInput = document.getElementById('percentageAInput');
+    if (percentageAInput) {
+        percentageAInput.addEventListener('input', (e) => {
+            setPercentageA(e.target.value);
+        });
+    }
+
+    const percentageBInput = document.getElementById('percentageBInput');
+    if (percentageBInput) {
+        percentageBInput.addEventListener('input', (e) => {
+            setPercentageA(100 - parseInt(e.target.value, 10));
+        });
+    }
     
     // Reverse order checkbox
     const checkbox = document.getElementById('reverseOrderCheckbox');
