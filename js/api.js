@@ -99,7 +99,7 @@ export class ApiService {
                 }
                 .modal-btn {
                     background-color: var(--primary-accent, #FF8762);
-                    color: var(--primary-dark, #3A001E);
+                    color: var(--on-accent, #1a0e08);
                     padding: 12px 30px;
                     font-size: 16px;
                     border: none;

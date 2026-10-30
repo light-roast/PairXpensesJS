@@ -1,9 +1,12 @@
 .full-report-container {
-    background-color: var(--main-color);
-    color: var(--primary-dark);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    color: var(--text);
     padding: 32px 40px;
     max-width: 1100px;
-    margin: 0 auto;
+    margin: 24px auto;
     font-family: "Chivo Mono", monospace;
 }
 
@@ -15,11 +18,11 @@
 }
 
 .full-report-actions button {
-    background-color: var(--primary-accent);
-    color: var(--primary-dark);
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    color: var(--on-accent);
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-family: "Expletus Sans", sans-serif;
     font-weight: bold;
@@ -27,12 +30,12 @@
 }
 
 .full-report-actions button:hover {
-    background-color: var(--accent-hover);
+    filter: brightness(1.1);
 }
 
 .full-report-heading {
     text-align: center;
-    border-bottom: 2px solid var(--primary-dark);
+    border-bottom: 1px solid var(--border-strong);
     padding-bottom: 16px;
     margin-bottom: 24px;
 }
@@ -40,25 +43,31 @@
 .full-report-heading h1 {
     font-family: "Expletus Sans", sans-serif;
     margin: 0 0 6px 0;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .full-report-date {
     margin: 0;
     font-size: 14px;
-    opacity: 0.75;
+    color: var(--text-muted);
 }
 
 .full-report-summary {
-    background-color: rgba(255, 135, 98, 0.08);
-    border-left: 4px solid var(--primary-accent);
+    background-color: var(--accent-soft);
+    border: 1px solid rgba(255, 135, 98, 0.25);
+    border-left: 4px solid var(--accent);
     padding: 16px 24px;
     margin-bottom: 32px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 
 .full-report-summary h2 {
     font-family: "Expletus Sans", sans-serif;
     margin-top: 0;
+    color: var(--accent);
 }
 
 .full-report-summary p {
@@ -69,8 +78,9 @@
 .full-report-final {
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid var(--primary-dark);
+    border-top: 1px solid rgba(255, 135, 98, 0.3);
     font-weight: bold;
+    color: var(--accent);
 }
 
 .full-report-users {
@@ -80,8 +90,9 @@
 }
 
 .full-report-user {
-    border: 1px solid var(--primary-dark);
-    border-radius: 6px;
+    border: 1px solid var(--border);
+    background-color: var(--surface-2);
+    border-radius: var(--radius-md);
     padding: 16px;
 }
 
@@ -89,7 +100,7 @@
     text-align: center;
     font-family: "Expletus Sans", sans-serif;
     margin-top: 0;
-    color: var(--primary-dark);
+    color: var(--accent);
 }
 
 .full-report-section {
@@ -100,6 +111,7 @@
     text-align: center;
     font-family: "Expletus Sans", sans-serif;
     margin-bottom: 8px;
+    color: var(--text);
 }
 
 .full-report-header,
@@ -112,8 +124,9 @@
 }
 
 .full-report-header {
-    border-bottom: 2px solid var(--primary-dark);
+    border-bottom: 2px solid var(--border-strong);
     font-family: "Expletus Sans", sans-serif;
+    color: var(--text-muted);
 }
 
 .full-report-header h4 {
@@ -126,7 +139,7 @@
 }
 
 .full-report-row {
-    border-bottom: 1px solid rgba(58, 0, 30, 0.15);
+    border-bottom: 1px solid var(--border);
 }
 
 .full-report-row span:first-child {
@@ -140,15 +153,16 @@
 .full-report-empty {
     padding: 12px;
     text-align: center;
-    opacity: 0.6;
+    color: var(--text-muted);
     font-style: italic;
 }
 
 .full-report-total {
     margin-top: 6px;
-    border-top: 2px solid var(--primary-dark);
+    border-top: 2px solid var(--border-strong);
     font-weight: bold;
     grid-template-columns: 2fr 1fr;
+    color: var(--accent);
 }
 
 .full-report-total span:last-child {
@@ -158,6 +172,7 @@
 @media screen and (max-width: 768px) {
     .full-report-container {
         padding: 16px;
+        margin: 12px 8px;
     }
 
     .full-report-actions {
@@ -210,6 +225,7 @@
 
     body {
         background-color: white !important;
+        background-image: none !important;
         color: black !important;
     }
 
@@ -222,6 +238,9 @@
         color: black;
         padding: 0;
         max-width: 100%;
+        border: none;
+        box-shadow: none;
+        margin: 0;
     }
 
     .full-report-heading,
@@ -230,18 +249,41 @@
         page-break-inside: avoid;
     }
 
+    .full-report-heading h1 {
+        -webkit-text-fill-color: black;
+        background: none;
+        color: black;
+    }
+
+    .full-report-date,
+    .full-report-summary h2,
+    .full-report-final,
+    .full-report-user h2,
+    .full-report-section h3,
+    .full-report-header,
+    .full-report-empty,
+    .full-report-total {
+        color: black;
+    }
+
     .full-report-summary {
         background-color: transparent;
+        border-color: black;
         border-left-color: black;
     }
 
     .full-report-user {
+        background-color: transparent;
         border-color: black;
     }
 
     .full-report-header,
     .full-report-total {
         border-color: black !important;
+    }
+
+    .full-report-row {
+        border-color: rgba(0, 0, 0, 0.2);
     }
 
     .full-report-users {

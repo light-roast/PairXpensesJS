@@ -165,8 +165,12 @@ function renderChargeControl() {
     `;
 }
 
-function setPercentageA(value) {
-    const nextValue = Math.min(100, Math.max(0, parseInt(value, 10) || 0));
+function setPercentageA(value, skipInput) {
+    const parsed = parseInt(value, 10);
+    if (isNaN(parsed)) {
+        return;
+    }
+    const nextValue = Math.min(100, Math.max(0, parsed));
     state.percentageA = nextValue;
 
     const percentageADisplay = document.getElementById('percentageADisplay');
@@ -187,11 +191,12 @@ function setPercentageA(value) {
         slider.value = String(state.percentageA);
     }
 
-    if (percentageAInput) {
+    // Skip the input being typed in so its value isn't clobbered mid-edit
+    if (percentageAInput && skipInput !== 'a') {
         percentageAInput.value = String(state.percentageA);
     }
 
-    if (percentageBInput) {
+    if (percentageBInput && skipInput !== 'b') {
         percentageBInput.value = String(100 - state.percentageA);
     }
 }
@@ -292,14 +297,26 @@ export function setupHomeHandlers() {
     const percentageAInput = document.getElementById('percentageAInput');
     if (percentageAInput) {
         percentageAInput.addEventListener('input', (e) => {
-            setPercentageA(e.target.value);
+            if (e.target.value === '') return; // let the user clear and retype
+            setPercentageA(e.target.value, 'a');
+        });
+        percentageAInput.addEventListener('blur', (e) => {
+            // Normalize on blur: restores state value if left empty/invalid
+            e.target.value = String(state.percentageA);
         });
     }
 
     const percentageBInput = document.getElementById('percentageBInput');
     if (percentageBInput) {
         percentageBInput.addEventListener('input', (e) => {
-            setPercentageA(100 - parseInt(e.target.value, 10));
+            if (e.target.value === '') return; // let the user clear and retype
+            const parsed = parseInt(e.target.value, 10);
+            if (isNaN(parsed)) return;
+            setPercentageA(100 - Math.min(100, Math.max(0, parsed)), 'b');
+        });
+        percentageBInput.addEventListener('blur', (e) => {
+            // Normalize on blur: restores state value if left empty/invalid
+            e.target.value = String(100 - state.percentageA);
         });
     }
     
