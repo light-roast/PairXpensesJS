@@ -2,31 +2,63 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
+    padding: 20px;
 }
 
 .login-box {
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     font-family: "Expletus Sans", sans-serif;
-    background-color: var(--primary-dark);
-    color: var(--primary-accent);
-    max-width: 350px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    max-width: 380px;
     min-width: 270px;
+    width: 100%;
     margin: 20px;
-    padding: 15px;
+    padding: 32px 28px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Accent glow strip on top of the card */
+.login-box::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-strong));
 }
 
 .login-box h1,
 .login-box h3 {
-    margin-top: 25px;
+    margin-top: 10px;
     text-align: center;
     display: block;
     margin-bottom: 20px;
     width: 100%;
+}
+
+.login-box h1 {
+    font-size: 28px;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.login-box h3 {
+    color: var(--text-muted);
+    font-weight: normal;
+    font-size: 16px;
 }
 
 .login-box .form-group {
@@ -36,55 +68,62 @@
 }
 
 .login-box label {
-    color: var(--primary-accent);
+    color: var(--text-muted);
     text-align: left;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
+    font-size: 14px;
 }
 
 .login-box input {
-    border: 2px solid var(--primary-accent);
-    border-radius: 5px;
-    padding: 10px;
-    max-width: 300px;
-    min-width: 240px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    max-width: 100%;
+    min-width: 0;
     font-family: "Sono", monospace;
-    color: var(--primary-accent);
-    background-color: var(--primary-dark);
+    color: var(--text);
+    background-color: var(--surface-2);
     width: 100%;
 }
 
+.login-box input:focus {
+    border-color: var(--accent);
+    box-shadow: var(--focus-ring);
+}
+
 .login-box button {
-    margin-bottom: 25px;
-    border-radius: 5px;
+    margin-bottom: 10px;
+    border-radius: var(--radius-sm);
     display: block;
     margin-left: auto;
     margin-right: auto;
-    background-color: var(--primary-accent);
-    border-color: var(--primary-accent);
-    color: var(--primary-dark);
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    color: var(--on-accent);
     font-family: "Expletus Sans", sans-serif;
     font-weight: bold;
-    padding: 10px 20px;
-    margin-top: 20px;
+    padding: 12px 20px;
+    margin-top: 10px;
 }
 
 .login-box button:hover {
-    background-color: var(--accent-hover);
-    border-color: var(--accent-hover);
-    color: var(--primary-dark);
+    filter: brightness(1.1);
+    color: var(--on-accent);
 }
 
 .login-box button:disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: not-allowed;
+    filter: none;
 }
 
 .error-message {
-    color: #ff4444;
+    color: var(--danger);
     text-align: center;
     margin-top: 10px;
     font-size: 14px;
+    width: 100%;
 }
 
 /* Spinning icon animation */
@@ -102,7 +141,7 @@
         max-width: 100%;
         min-width: 0;
         margin: 15px;
-        padding: 20px 15px;
+        padding: 28px 20px;
     }
 
     .login-box h1 {
@@ -110,7 +149,7 @@
     }
 
     .login-box h3 {
-        font-size: 18px;
+        font-size: 15px;
     }
 
     .login-box input {
@@ -122,15 +161,15 @@
 @media screen and (max-width: 480px) {
     .login-box {
         margin: 10px;
-        padding: 15px 10px;
+        padding: 24px 16px;
     }
 
     .login-box h1 {
         font-size: 22px;
-        margin-top: 15px;
+        margin-top: 5px;
     }
 
     .login-box h3 {
-        font-size: 16px;
+        font-size: 14px;
     }
 }
