@@ -220,13 +220,22 @@
 @media print {
     @page {
         size: A4;
-        margin: 14mm;
+        margin: 10mm;
     }
 
-    body {
-        background-color: white !important;
+    /* Keep the site's dark palette in the exported PDF */
+    html, body {
+        background-color: var(--bg) !important;
         background-image: none !important;
-        color: black !important;
+        color: var(--text) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .full-report-container,
+    .full-report-container * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     .no-print {
@@ -234,11 +243,12 @@
     }
 
     .full-report-container {
-        background-color: white;
-        color: black;
-        padding: 0;
+        background-color: var(--surface);
+        color: var(--text);
+        padding: 24px;
         max-width: 100%;
-        border: none;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
         box-shadow: none;
         margin: 0;
     }
@@ -249,41 +259,11 @@
         page-break-inside: avoid;
     }
 
+    /* Gradient text clips unreliably in print - use solid accent */
     .full-report-heading h1 {
-        -webkit-text-fill-color: black;
+        -webkit-text-fill-color: var(--accent);
         background: none;
-        color: black;
-    }
-
-    .full-report-date,
-    .full-report-summary h2,
-    .full-report-final,
-    .full-report-user h2,
-    .full-report-section h3,
-    .full-report-header,
-    .full-report-empty,
-    .full-report-total {
-        color: black;
-    }
-
-    .full-report-summary {
-        background-color: transparent;
-        border-color: black;
-        border-left-color: black;
-    }
-
-    .full-report-user {
-        background-color: transparent;
-        border-color: black;
-    }
-
-    .full-report-header,
-    .full-report-total {
-        border-color: black !important;
-    }
-
-    .full-report-row {
-        border-color: rgba(0, 0, 0, 0.2);
+        color: var(--accent);
     }
 
     .full-report-users {
