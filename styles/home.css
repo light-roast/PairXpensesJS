@@ -170,7 +170,7 @@ main {
     border-bottom: 1px solid var(--border);
     align-items: center;
     border-radius: var(--radius-sm);
-    transition: background-color 0.15s ease;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .item-row span {
@@ -526,8 +526,11 @@ input:checked + .slider:before {
     color: var(--accent);
 }
 
-.item-row:hover {
-    background-color: var(--surface-2);
+/* Hover (desktop) and tap (mobile :active) highlight */
+.item-row:hover,
+.item-row:active {
+    background-color: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
     cursor: pointer;
 }
 
@@ -607,25 +610,25 @@ input:checked + .slider:before {
     .item-row {
         grid-template-columns: 1.5fr 0.9fr 1fr;
         gap: 4px;
-        padding: 10px 4px;
-        font-size: 14px;
+        padding: 13px 4px;
+        font-size: 15px;
     }
 
     .items-header h4 {
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .item-row span {
-        font-size: 14px;
+        font-size: 15px;
         word-break: break-word;
         padding: 0 2px;
     }
 
     .item-row .delete-btn {
-        padding: 4px 5px;
-        font-size: 9px;
+        padding: 6px 7px;
+        font-size: 11px;
         white-space: nowrap;
-        max-width: 55px;
+        max-width: 60px;
     }
 
     .actions-section {
@@ -704,25 +707,25 @@ input:checked + .slider:before {
     .items-header,
     .item-row {
         grid-template-columns: 1.3fr 0.8fr 0.9fr;
-        font-size: 10px;
-        padding: 6px 2px;
+        font-size: 13px;
+        padding: 12px 2px;
         gap: 3px;
     }
 
     .items-header h4 {
-        font-size: 10px;
+        font-size: 12px;
         padding: 0 1px;
     }
 
     .item-row span {
-        font-size: 10px;
+        font-size: 13px;
         padding: 0 1px;
     }
 
     .item-row .delete-btn {
-        padding: 3px 4px;
-        font-size: 8px;
-        max-width: 50px;
+        padding: 5px 6px;
+        font-size: 10px;
+        max-width: 55px;
     }
 
     button {
